@@ -37,8 +37,8 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-STOCK = 'News'
-BID = 'Bid'
+STOCK = 'STOCK NEWS'
+BID = 'STOCK BID'
 
 images = {
     STOCK: "stock",
@@ -48,13 +48,13 @@ images = {
 
 def game(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [
-        [BID, STOCK],
+        [STOCK, BID],
     ]
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     context.chat_data["photos"] = []
     update.message.reply_text(
-        'Starting the game.', reply_markup=ReplyKeyboardMarkup(reply_keyboard),
+        'Starting the game.', reply_markup=ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True),
     )
     return 1
 
@@ -65,22 +65,18 @@ def game_handler(update: Update, context: CallbackContext) -> int:
     message = update.message.text
     if not context.chat_data.get("photos"):
         context.chat_data["photos"] = []
-    print(context.chat_data)
     if message in images:
         directory = images[message]
         path = f"images/{directory}"
         path_images = os.listdir(path)
         path_images = [f"{path}/{image}" for image in path_images]
         unique_path_images = os.listdir("images/unique/")
-        print(unique_path_images)
         unique_path_images = [
             f"images/unique/{image}" for image in unique_path_images
             if f"images/unique/{image}" not in context.chat_data["photos"]
         ]
-        print(unique_path_images)
         if message == BID:
             path_images += unique_path_images
-        print(path_images)
         file_path = random.choice(path_images)
         if file_path in unique_path_images:
             context.chat_data["photos"].append(file_path)
@@ -92,7 +88,7 @@ def main() -> None:
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater("1465697626:AAGs7JZJOeDAS11LzaofYsjlim2O0lh7uPk", use_context=True)
+    updater = Updater("1659784079:AAEVSOHq24qsMl4cwDnfFyJ0MMqX92IyvSU", use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
